@@ -13,13 +13,15 @@ namespace Scanner
             mIf = 0, //if
             lParen = 1, //(
             rParen = 2, //)
-            opRel = 3, // ==|>=|<=|!=
+            opRel = 3, // ==|>=|<=|=!
             comment = 4, // // :p
             lChave = 5, //{
             rChave = 6, //}
-            id = 7 //Qualquer caractere que inicia com letra
+            id = 7, //Qualquer caractere que inicia com letra
+            mWhile = 8, // while
+            PontoVigula = 9, // ;
+            mInt = 10 // int
         }
-
 
         static void Main(string[] args)
         {
@@ -41,7 +43,7 @@ namespace Scanner
                         while (!sr.EndOfStream)
                         {
                             lexema mlex = lexema.undef;
-                            mlex = CheckChar(ref sr, ref token);                            
+                            mlex = CheckChar(ref sr, ref token);
 
                             Console.Write($"{token},{mlex.ToString()}\n");
                         }
@@ -53,7 +55,7 @@ namespace Scanner
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
@@ -89,13 +91,9 @@ namespace Scanner
                 //Pula pra proxima linha
                 sr.ReadLine();
             }
-            else if (ch == 'i' && (char)sr.Peek() == 'f')
+            else if (ch ==';')
             {
-                ch = (char)sr.Read();
-                token += ch.ToString();
-
-                if (String.Equals(token.ToLower(), "if"))
-                    mlex = lexema.mIf;
+                mlex = lexema.PontoVigula;
             }
             else if (ch == '(')
             {
@@ -126,7 +124,8 @@ namespace Scanner
                     ch = (char)sr.Read();
                     token += ch.ToString();
                 }
-                mlex = lexema.id;
+
+                mlex = FindLex(token);                
             }
             else
             {
@@ -139,6 +138,22 @@ namespace Scanner
 
             return mlex;
             //Console.Write($"{token},{mlex.ToString()}\n");
+
+        }
+
+        private static lexema FindLex(string token)
+        {
+            switch (token)
+            {
+                case "while":
+                    return lexema.mWhile;
+                case "if":
+                    return lexema.mIf;
+                case "int":
+                    return lexema.mInt;
+                default:
+                    return lexema.id;
+            }
 
         }
     }
