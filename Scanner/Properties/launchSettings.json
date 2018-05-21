@@ -2,7 +2,7 @@
   "profiles": {
     "Scanner": {
       "commandName": "Project",
-      "commandLineArgs": "file"
+      "commandLineArgs": "teste"
     }
   }
 }

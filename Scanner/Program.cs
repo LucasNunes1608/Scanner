@@ -20,7 +20,17 @@ namespace Scanner
             id = 7, //Qualquer caractere que inicia com letra
             mWhile = 8, // while
             PontoVigula = 9, // ;
-            mInt = 10 // int
+            mInt = 10, // int
+            mElse = 11, // else
+            mSwitch = 12, // Switch
+            mCase = 13, // Case
+            DoisPontos = 14, // :
+            mBreak = 15, // break
+            mFor = 16, // for
+            valor = 17, // numericos
+            mAtribuicao = 18, // =
+            mOpAlgebrico = 19, // + - * /
+            mString = 20 // "((a-z)*(0-9)*)*"
         }
 
         static void Main(string[] args)
@@ -91,9 +101,13 @@ namespace Scanner
                 //Pula pra proxima linha
                 sr.ReadLine();
             }
-            else if (ch ==';')
+            else if (ch == ';')
             {
                 mlex = lexema.PontoVigula;
+            }
+            else if (ch == ':')
+            {
+                mlex = lexema.DoisPontos;
             }
             else if (ch == '(')
             {
@@ -117,6 +131,24 @@ namespace Scanner
                 token += ch.ToString();
                 mlex = lexema.opRel;
             }
+            else if (ch == '=')
+            {
+                mlex = lexema.mAtribuicao;
+            }
+            else if (ch == '+' || ch == '-' || ch == '*' || ch == '/')
+            {
+                mlex = lexema.mOpAlgebrico;
+            }
+            else if(ch == '"')
+            {
+                do
+                {
+                    ch = (char)sr.Read();
+                    token += ch.ToString();
+                } while (ch != '"');
+
+                mlex = lexema.mString;
+            }
             else if (char.IsLetter(ch))
             {
                 while (char.IsLetterOrDigit((char)sr.Peek()))
@@ -125,7 +157,26 @@ namespace Scanner
                     token += ch.ToString();
                 }
 
-                mlex = FindLex(token);                
+                mlex = FindLex(token);
+            }
+            else if (char.IsDigit(ch))
+            {
+                mlex = lexema.valor;
+
+                while (!char.IsWhiteSpace((char)sr.Peek()))
+                {
+                    if (char.IsLetter((char)sr.Peek()))
+                    {
+                        mlex = lexema.undef;
+                    }
+                    else if (!char.IsNumber((char)sr.Peek()))
+                    {
+                        break;
+                    }
+
+                    ch = (char)sr.Read();
+                    token += ch.ToString();                    
+                }
             }
             else
             {
@@ -151,6 +202,16 @@ namespace Scanner
                     return lexema.mIf;
                 case "int":
                     return lexema.mInt;
+                case "else":
+                    return lexema.mElse;
+                case "switch":
+                    return lexema.mSwitch;
+                case "case":
+                    return lexema.mCase;
+                case "break":
+                    return lexema.mBreak;
+                case "for":
+                    return lexema.mFor;
                 default:
                     return lexema.id;
             }
