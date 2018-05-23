@@ -39,7 +39,7 @@ namespace Scanner
 
             if (args.Length <= 0)
             {
-                Console.WriteLine("Os Argumentos são Scanner -[Arquivo] \n ex: Scanner -file");
+                Console.WriteLine("Os Argumentos são Scanner [Arquivo] \n ex: Scanner file");
             }
             else
             {
@@ -61,6 +61,9 @@ namespace Scanner
 
                                     fw.WriteLine($"{token},{mlex.ToString()}\n");
                                 }
+
+                                Console.WriteLine("Output criado.");
+
                             }
                         }
                         else
