@@ -44,23 +44,29 @@ namespace Scanner
             else
             {
                 string filePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\" + args[0] + ".luc";
+                string outputPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\output.luc";
                 string token = string.Empty;
                 try
                 {
-                    StreamReader sr = new StreamReader(filePath);
-                    if (new FileInfo(filePath).Length != 0)
+                    using (StreamReader sr = new StreamReader(filePath))
                     {
-                        while (!sr.EndOfStream)
+                        if (new FileInfo(filePath).Length != 0)
                         {
-                            lexema mlex = lexema.undef;
-                            mlex = CheckChar(ref sr, ref token);
+                            using (StreamWriter fw = new StreamWriter(outputPath))
+                            {
+                                while (!sr.EndOfStream)
+                                {
+                                    lexema mlex = lexema.undef;
+                                    mlex = CheckChar(sr, ref token);
 
-                            Console.Write($"{token},{mlex.ToString()}\n");
+                                    fw.WriteLine($"{token},{mlex.ToString()}\n");
+                                }
+                            }
                         }
-                    }
-                    else
-                    {
-                        Console.WriteLine("O Arquivo está vazio.");
+                        else
+                        {
+                            Console.WriteLine("O Arquivo está vazio.");
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -70,7 +76,7 @@ namespace Scanner
             }
         }
 
-        static lexema CheckChar(ref StreamReader sr, ref string token)
+        static lexema CheckChar(StreamReader sr, ref string token)
         {
             lexema mlex;
             //Caracteres indesejados
@@ -139,7 +145,7 @@ namespace Scanner
             {
                 mlex = lexema.mOpAlgebrico;
             }
-            else if(ch == '"')
+            else if (ch == '"')
             {
                 do
                 {
@@ -175,7 +181,7 @@ namespace Scanner
                     }
 
                     ch = (char)sr.Read();
-                    token += ch.ToString();                    
+                    token += ch.ToString();
                 }
             }
             else
