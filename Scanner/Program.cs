@@ -5,15 +5,15 @@ using System.Reflection;
 
 namespace Scanner
 {
-    class Program
+    public class Program
     {
-        enum lexema
+        public enum lexema
         {
             undef = -1,
             mIf = 0, //if
             lParen = 1, //(
             rParen = 2, //)
-            opRel = 3, // ==|>=|<=|=!
+            opRel = 3, // ==|>=|<=|=!| < | >
             comment = 4, // // :p
             lChave = 5, //{
             rChave = 6, //}
@@ -30,7 +30,8 @@ namespace Scanner
             valor = 17, // numericos
             mAtribuicao = 18, // =
             mOpAlgebrico = 19, // + - * /
-            mString = 20 // "((a-z)*(0-9)*)*"
+            mString = 20, // "((a-z)*(0-9)*)*"
+            mPrintf = 21
         }
 
         static void Main(string[] args)
@@ -76,6 +77,9 @@ namespace Scanner
                 {
                     Console.WriteLine(ex.Message);
                 }
+
+                if (SyntacticAnalyzer.AnalyzeOutput())
+                    Console.WriteLine("Analise Sintatica finalizada com sucesso, nao foram encontrados erros.");
             }
         }
 
@@ -134,7 +138,7 @@ namespace Scanner
             {
                 mlex = lexema.rChave;
             }
-            else if ((ch == '=' && ((char)sr.Peek() == '!' || (char)sr.Peek() == '=')) || ((ch == '>' || ch == '<') && (char)sr.Peek() == '=') || (ch == '!' && (char)sr.Peek() == '='))
+            else if ((ch == '=' && ((char)sr.Peek() == '!' || (char)sr.Peek() == '=')) || ((ch == '>' || ch == '<') && (char)sr.Peek() == '=') || (ch == '!' && (char)sr.Peek() == '=') || ch == '>' || ch == '<')
             {
                 ch = (char)sr.Read();
                 token += ch.ToString();
@@ -221,6 +225,8 @@ namespace Scanner
                     return lexema.mBreak;
                 case "for":
                     return lexema.mFor;
+                case "printf":
+                    return lexema.mPrintf;
                 default:
                     return lexema.id;
             }
